@@ -50,9 +50,7 @@ bool isSessionCompatible(
         final chains = getAccountsChains(accounts);
         final overlap = requiredNamespace.extension?.any(
               (ext) =>
-                  hasOverlap(ext.chains, chains) &&
-                  hasOverlap(ext.methods, methods) &&
-                  hasOverlap(ext.events, events),
+                  hasOverlap(ext.chains, chains) && hasOverlap(ext.methods, methods) && hasOverlap(ext.events, events),
             ) ??
             false;
         if (!overlap) compatible = false;
@@ -102,12 +100,10 @@ ErrorObject? isValidExtension(
 ) {
   if (namespace.extension != null) {
     if ((namespace is SessionNamespace && (namespace.extension!.isEmpty)) ||
-        (namespace is ProposalRequiredNamespace &&
-            (namespace.extension!.isEmpty))) {
+        (namespace is ProposalRequiredNamespace && (namespace.extension!.isEmpty))) {
       final error = getInternalError(
         InternalErrorKey.MISSING_OR_INVALID,
-        context:
-            '$method extension should be an array of namespaces, or omitted',
+        context: '$method extension should be an array of namespaces, or omitted',
       );
       return ErrorObject(message: error.message, code: error.code);
     }
@@ -131,8 +127,7 @@ ErrorObject? isValidChains(
     if (!isValidChainId(chain) || !chain.contains(key)) {
       error = getSdkError(
         SdkErrorKey.UNSUPPORTED_CHAINS,
-        context:
-            '$context, chain $chain should be a string and conform to "namespace:chainId" format',
+        context: '$context, chain $chain should be a string and conform to "namespace:chainId" format',
       );
     }
   });
@@ -149,8 +144,7 @@ ErrorObject? isValidNamespaceChains(
     final key = entry.key;
     final namespace = entry.value;
     if (error != null) return;
-    final validChainsError =
-        isValidChains(key, namespace.chains, '$method requiredNamespace');
+    final validChainsError = isValidChains(key, namespace.chains, '$method requiredNamespace');
     final validExtensionError = isValidExtension(namespace, method);
     if (validChainsError != null) {
       error = validChainsError;
@@ -159,8 +153,7 @@ ErrorObject? isValidNamespaceChains(
     } else if (namespace.extension != null) {
       namespace.extension!.forEach((extension) {
         if (error != null) return;
-        final validChainsError =
-            isValidChains(key, extension.chains, '$method extension');
+        final validChainsError = isValidChains(key, extension.chains, '$method extension');
         if (validChainsError != null) {
           error = validChainsError;
         }
@@ -180,16 +173,14 @@ ErrorObject? isValidAccounts(List<String> accounts, String context) {
       if (!isValidAccountId(account)) {
         error = getSdkError(
           SdkErrorKey.UNSUPPORTED_ACCOUNTS,
-          context:
-              '$context, account $account should be a string and conform to "namespace:chainId:address" format',
+          context: '$context, account $account should be a string and conform to "namespace:chainId:address" format',
         );
       }
     });
   } else {
     error = getSdkError(
       SdkErrorKey.UNSUPPORTED_ACCOUNTS,
-      context:
-          '$context, accounts should be an array of strings conforming to "namespace:chainId:address" format',
+      context: '$context, accounts should be an array of strings conforming to "namespace:chainId:address" format',
     );
   }
 
@@ -203,8 +194,7 @@ ErrorObject? isValidNamespaceAccounts(
   ErrorObject? error;
   input.values.forEach((namespace) {
     if (error != null) return;
-    final validAccountsError =
-        isValidAccounts(namespace.accounts, '$method namespace');
+    final validAccountsError = isValidAccounts(namespace.accounts, '$method namespace');
     final validExtensionError = isValidExtension(namespace, method);
     if (validAccountsError != null) {
       error = validAccountsError;
@@ -213,8 +203,7 @@ ErrorObject? isValidNamespaceAccounts(
     } else if (namespace.extension != null) {
       namespace.extension!.forEach((extension) {
         if (error != null) return;
-        final validAccountsError =
-            isValidAccounts(extension.accounts, '$method extension');
+        final validAccountsError = isValidAccounts(extension.accounts, '$method extension');
         if (validAccountsError != null) {
           error = validAccountsError;
         }
@@ -230,23 +219,17 @@ ErrorObject? isValidActions(
   String context,
 ) {
   ErrorObject? error;
-  if ((namespace is SessionBaseNamespace &&
-          !isValidNamespaceMethodsOrEvents(namespace.methods)) ||
-      (namespace is ProposalBaseRequiredNamespace &&
-          !isValidNamespaceMethodsOrEvents(namespace.methods))) {
+  if ((namespace is SessionBaseNamespace && !isValidNamespaceMethodsOrEvents(namespace.methods)) ||
+      (namespace is ProposalBaseRequiredNamespace && !isValidNamespaceMethodsOrEvents(namespace.methods))) {
     error = getSdkError(
       SdkErrorKey.UNSUPPORTED_METHODS,
-      context:
-          '$context, methods should be an array of strings or empty array for no methods',
+      context: '$context, methods should be an array of strings or empty array for no methods',
     );
-  } else if ((namespace is SessionBaseNamespace &&
-          !isValidNamespaceMethodsOrEvents(namespace.events)) ||
-      (namespace is ProposalBaseRequiredNamespace &&
-          !isValidNamespaceMethodsOrEvents(namespace.events))) {
+  } else if ((namespace is SessionBaseNamespace && !isValidNamespaceMethodsOrEvents(namespace.events)) ||
+      (namespace is ProposalBaseRequiredNamespace && !isValidNamespaceMethodsOrEvents(namespace.events))) {
     error = getSdkError(
       SdkErrorKey.UNSUPPORTED_EVENTS,
-      context:
-          '$context, events should be an array of strings or empty array for no events',
+      context: '$context, events should be an array of strings or empty array for no events',
     );
   }
 
@@ -296,12 +279,13 @@ ErrorObject? isValidRequiredNamespaces(
     if (validChainsError != null) {
       error = validChainsError;
     }
-  } else {
-    error = getInternalError(
-      InternalErrorKey.MISSING_OR_INVALID,
-      context: '$method, requiredNamespaces should be an object with data',
-    );
   }
+  // else {
+  //   error = getInternalError(
+  //     InternalErrorKey.MISSING_OR_INVALID,
+  //     context: '$method, requiredNamespaces should be an object with data',
+  //   );
+  // }
 
   return error;
 }
@@ -409,32 +393,24 @@ ErrorObject? isConformingNamespaces(
       if (!hasOverlap(requiredNamespaceChains, namespaceChains)) {
         error = getInternalError(
           InternalErrorKey.NON_CONFORMING_NAMESPACES,
-          context:
-              '$context namespaces accounts don\'t satisfy requiredNamespaces chains for $key',
+          context: '$context namespaces accounts don\'t satisfy requiredNamespaces chains for $key',
         );
-      } else if (!hasOverlap(
-          requiredNamespaces[key]!.methods, namespaces[key]!.methods)) {
+      } else if (!hasOverlap(requiredNamespaces[key]!.methods, namespaces[key]!.methods)) {
         error = getInternalError(
           InternalErrorKey.NON_CONFORMING_NAMESPACES,
-          context:
-              '$context namespaces methods don\'t satisfy requiredNamespaces methods for $key',
+          context: '$context namespaces methods don\'t satisfy requiredNamespaces methods for $key',
         );
-      } else if (!hasOverlap(
-          requiredNamespaces[key]!.events, namespaces[key]!.events)) {
+      } else if (!hasOverlap(requiredNamespaces[key]!.events, namespaces[key]!.events)) {
         error = getInternalError(
           InternalErrorKey.NON_CONFORMING_NAMESPACES,
-          context:
-              '$context namespaces events don\'t satisfy requiredNamespaces events for $key',
+          context: '$context namespaces events don\'t satisfy requiredNamespaces events for $key',
         );
-      } else if (requiredNamespaces[key]!.extension != null &&
-          namespaces[key]!.extension == null) {
+      } else if (requiredNamespaces[key]!.extension != null && namespaces[key]!.extension == null) {
         error = getInternalError(
           InternalErrorKey.NON_CONFORMING_NAMESPACES,
-          context:
-              '$context namespaces extension doesn\'t satisfy requiredNamespaces extension for $key',
+          context: '$context namespaces extension doesn\'t satisfy requiredNamespaces extension for $key',
         );
-      } else if (requiredNamespaces[key]!.extension != null &&
-          namespaces[key]!.extension != null) {
+      } else if (requiredNamespaces[key]!.extension != null && namespaces[key]!.extension != null) {
         requiredNamespaces[key]!.extension!.forEach((namespace) {
           final methods = namespace.methods;
           final events = namespace.events;
@@ -451,8 +427,7 @@ ErrorObject? isConformingNamespaces(
           if (!isOverlap) {
             error = getInternalError(
               InternalErrorKey.NON_CONFORMING_NAMESPACES,
-              context:
-                  '$context namespaces extension doesn\'t satisfy requiredNamespaces extension for $key',
+              context: '$context namespaces extension doesn\'t satisfy requiredNamespaces extension for $key',
             );
           }
         });
