@@ -304,12 +304,13 @@ ErrorObject? isValidNamespaces(
     if (validAccountsError != null) {
       error = validAccountsError;
     }
-  } else {
-    error = getInternalError(
-      InternalErrorKey.MISSING_OR_INVALID,
-      context: '$method, namespaces should be an object with data',
-    );
   }
+  //  else {
+  //   error = getInternalError(
+  //     InternalErrorKey.MISSING_OR_INVALID,
+  //     context: '$method, namespaces should be an object with data',
+  //   );
+  // }
 
   return error;
 }
