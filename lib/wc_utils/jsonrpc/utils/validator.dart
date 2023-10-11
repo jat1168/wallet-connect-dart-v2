@@ -17,5 +17,5 @@ bool isJsonRpcResult(dynamic payload) {
 }
 
 bool isJsonRpcError(dynamic payload) {
-  return payload is JsonRpcError || payload is Map && payload.containsKey('error') && payload.values.isNotEmpty;
+  return payload is JsonRpcError || payload is Map && payload.containsKey('error') && payload['error'].isNotEmpty;
 }
